@@ -19,8 +19,8 @@ Simple demo node app - docker example
  ## Build docker image
 ```docker build -t node-app .```
 
-## Start a container with env variable for ipaddress
-```docker run -p 8080:8080 --env IP=10.0.0.10 --name api-server -t node-app```
+## Start a container
+```docker run -p 8080:8080 --name api-server -t node-app```
 
 ## Stop the server
 ```docker rm -f api-server```

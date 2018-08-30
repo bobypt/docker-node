@@ -1,16 +1,17 @@
 'use strict';
 
 const express = require('express');
+const uuidv1 = require('uuid/v1');
 
 // Constants
 const PORT = 8080;
-const IP = process.env.IP || "NOT SET";
+const ID = uuidv1();
 
 // App
 const app = express();
 
 app.get('/info', (req, res) => {
-  res.json({ip : IP});
+  res.json({id : ID});
 });
 
 app.get('/health', (req, res) => {
