@@ -1,0 +1,19 @@
+{
+  "name": "docker-node-demo",
+  "version": "1.0.0",
+  "description": "Simple demo node app - docker example",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "node",
+    "docker"
+  ],
+  "author": "Boby Thomas",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "ip": "^1.1.5"
+  }
+}
