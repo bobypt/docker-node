@@ -12,6 +12,8 @@ Simple demo node app - docker example
 
  ## Test
  ```curl localhost:8080/info```
+
+ and health
  ```curl localhost:8080/health```
 
  ## Build docker image
