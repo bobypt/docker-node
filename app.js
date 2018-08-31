@@ -11,7 +11,9 @@ const ID = uuidv1();
 const app = express();
 
 app.get('/info', (req, res) => {
-  res.json({id : ID});
+  res.json(
+    {id : ID, version: "1"}
+  );
 });
 
 app.get('/health', (req, res) => {
