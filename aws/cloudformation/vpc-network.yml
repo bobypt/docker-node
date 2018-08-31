@@ -1,5 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This stack creates a VPC with both public and private subnets. 
+Parameters: 
+  VpcNamePrefix: 
+    Type: String
+    Default: Demo1
+    Description: Prefix for resource names.
+
 Mappings:
   # Hard values for the subnet masks. These masks define
   # the range of internal IP addresses that can be assigned.
@@ -33,6 +39,9 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       CidrBlock: !FindInMap ['SubnetConfig', 'VPC', 'CIDR']
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, Vpc] ] 
 
   # Two public subnets, where containers can have public IP addresses
   PublicSubnetOne:
@@ -45,6 +54,9 @@ Resources:
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PublicOne', 'CIDR']
       MapPublicIpOnLaunch: true
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicSubnetOne] ]       
   PublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -55,6 +67,9 @@ Resources:
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PublicTwo', 'CIDR']
       MapPublicIpOnLaunch: true
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicSubnetTwo] ]       
 
   # Two private subnets where containers will only have private
   # IP addresses, and will only be reachable by other members of the
@@ -68,6 +83,9 @@ Resources:
          - Fn::GetAZs: {Ref: 'AWS::Region'}
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateOne', 'CIDR']
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateSubnetOne] ]       
   PrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -77,6 +95,9 @@ Resources:
          - Fn::GetAZs: {Ref: 'AWS::Region'}
       VpcId: !Ref 'VPC'
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateTwo', 'CIDR']
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateSubnetTwo] ]       
 
   # Setup networking resources for the public subnets. Containers
   # in the public subnets have public IP addresses and the routing table
