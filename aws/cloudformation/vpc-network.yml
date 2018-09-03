@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This stack creates a VPC with both public and private subnets. 
 Parameters: 
-  VpcNamePrefix: 
+  EnvironmentNamePrefix: 
     Type: String
     Default: Demo1
     Description: Prefix for resource names.
@@ -41,7 +41,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'VPC', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, Vpc] ] 
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, Vpc] ] 
 
   # Two public subnets, where containers can have public IP addresses
   PublicSubnetOne:
@@ -56,7 +56,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicSubnetOne] ]       
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicSubnetOne] ]       
   PublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -69,7 +69,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicSubnetTwo] ]       
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicSubnetTwo] ]       
 
   # Two private subnets where containers will only have private
   # IP addresses, and will only be reachable by other members of the
@@ -85,7 +85,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateOne', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateSubnetOne] ]       
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateSubnetOne] ]       
   PrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -97,7 +97,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateTwo', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateSubnetTwo] ]       
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateSubnetTwo] ]       
 
   # Setup networking resources for the public subnets. Containers
   # in the public subnets have public IP addresses and the routing table
@@ -115,14 +115,14 @@ Resources:
       VpcId: !Ref 'VPC'
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicRouteTable] ]        
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicRouteTable] ]        
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref 'VPC'      
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateRouteTable] ]        
+        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateRouteTable] ]        
   PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: GatewayAttachement
@@ -161,24 +161,24 @@ Outputs:
     Description: The ID of the VPC that this stack is deployed in
     Value: !Ref 'VPC'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'VPCId' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'VPCId' ] ]
   PublicSubnetOne:
     Description: Public subnet one
     Value: !Ref 'PublicSubnetOne'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'PublicSubnetOne' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetOne' ] ]
   PublicSubnetTwo:
     Description: Public subnet two
     Value: !Ref 'PublicSubnetTwo'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'PublicSubnetTwo' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetTwo' ] ]
   PrivateSubnetOne:
     Description: Private subnet one
     Value: !Ref 'PrivateSubnetOne'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'PrivateSubnetOne' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PrivateSubnetOne' ] ]
   PrivateSubnetTwo:
     Description: Private subnet two
     Value: !Ref 'PrivateSubnetTwo'
     Export:
-      Name: !Join [ ':', [ !Ref 'AWS::StackName', 'PrivateSubnetTwo' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PrivateSubnetTwo' ] ]
