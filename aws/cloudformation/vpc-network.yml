@@ -113,6 +113,16 @@ Resources:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref 'VPC'
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PublicRouteTable] ]        
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VPC'      
+      Tags:
+      - Key: Name
+        Value: !Join [ '-', [!Ref VpcNamePrefix, PrivateRouteTable] ]        
   PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: GatewayAttachement
@@ -130,6 +140,16 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnetTwo
       RouteTableId: !Ref PublicRouteTable
+  PrivateSubnetOneRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetOne
+      RouteTableId: !Ref PrivateRouteTable
+  PrivateSubnetTwoRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetTwo
+      RouteTableId: !Ref PrivateRouteTable      
 
 
 
