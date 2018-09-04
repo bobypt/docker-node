@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: This stack creates natgateway and attach to public subnet. 
-             Also add Route rule for vpc private subnetsfor all traffic to 0.0.0.0/0 to be directed to NAT gateway.
+Description: This stack creates a natgateway in one of the public subnet. 
+             Also add a Route for private subnets to redirect all internet traffic outwords (0.0.0.0/0) to be directed to NAT gateway.
 Parameters: 
   EnvironmentName: 
     Type: String
@@ -19,9 +19,11 @@ Resources:
       SubnetId: 
         Fn::ImportValue:
           !Join [':', [!Ref 'EnvironmentName', 'PublicSubnetOne']]      
-  PrivateRouteOne:
+  PrivateRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref PrivateRouteTableOne
+      RouteTableId: 
+        Fn::ImportValue:
+          !Join [':', [!Ref 'EnvironmentName', 'PrivateRouteTable']]         
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: !Ref NatGatewayOne          

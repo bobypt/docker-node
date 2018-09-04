@@ -182,3 +182,13 @@ Outputs:
     Value: !Ref 'PrivateSubnetTwo'
     Export:
       Name: !Join [ ':', [ !Ref EnvironmentName, 'PrivateSubnetTwo' ] ]
+  PublicRouteTable:
+    Description: PublicRouteTable
+    Value: !Ref PublicRouteTable
+    Export:
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PublicRouteTable' ] ]    
+  PrivateRouteTable:
+    Description: PrivateRouteTable
+    Value: !Ref PrivateRouteTable
+    Export:
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PrivateRouteTable' ] ]        
