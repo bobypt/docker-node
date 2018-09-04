@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This template create a fargate cluster.
 Parameters: 
-  EnvironmentNamePrefix: 
+  EnvironmentName: 
     Type: String
     Default: Demo1
-    Description: Prefix for resource names.
+    Description: Name of the environment.
 
     
 Resources:
@@ -12,14 +12,14 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Join [ '-', [ !Ref 'EnvironmentNamePrefix', 'Cluster' ] ]    
+      ClusterName: !Join [ '-', [ !Ref 'EnvironmentName', 'Cluster' ] ]    
 
   FargateContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Access to the Fargate containers
       VpcId:
-        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentNamePrefix', 'VPCId']]
+        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentName', 'VPCId']]
   EcsSecurityGroupIngressFromPublicALB:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -27,7 +27,7 @@ Resources:
       GroupId: !Ref 'FargateContainerSecurityGroup'
       IpProtocol: -1
       SourceSecurityGroupId: 
-        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerSG']]
+        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentName', 'PublicLoadBalancerSG']]
 
   # This is an IAM role which authorizes ECS to manage resources on your
   # account on your behalf, such as updating your load balancer with the
@@ -100,22 +100,22 @@ Outputs:
     Description: The name of the ECS cluster
     Value: !Ref 'ECSCluster'
     Export:
-      Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'ClusterName' ] ]
+      Name: !Join [ ':', [ !Ref 'EnvironmentName', 'ClusterName' ] ]
   ECSRole:
     Description: The ARN of the ECS role
     Value: !GetAtt 'ECSRole.Arn'
     Export:
-      Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'ECSRole' ] ]
+      Name: !Join [ ':', [ !Ref 'EnvironmentName', 'ECSRole' ] ]
   ECSTaskExecutionRole:
     Description: The ARN of the ECS role
     Value: !GetAtt 'ECSTaskExecutionRole.Arn'
     Export:
-      Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'ECSTaskExecutionRole' ] ]
+      Name: !Join [ ':', [ !Ref 'EnvironmentName', 'ECSTaskExecutionRole' ] ]
   FargateContainerSecurityGroup:
     Description: The ARN of the Farget Container SG
     Value: !Ref 'FargateContainerSecurityGroup'
     Export:
-      Name: !Join [':', [!Ref 'EnvironmentNamePrefix', 'FargateContainerSecurityGroup']]
+      Name: !Join [':', [!Ref 'EnvironmentName', 'FargateContainerSecurityGroup']]
 
 
                 

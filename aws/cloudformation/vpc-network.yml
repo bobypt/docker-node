@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This stack creates a VPC with both public and private subnets. 
 Parameters: 
-  EnvironmentNamePrefix: 
+  EnvironmentName: 
     Type: String
     Default: Demo1
-    Description: Prefix for resource names.
+    Description: Name of the environment.
 
 Mappings:
   # Hard values for the subnet masks. These masks define
@@ -41,7 +41,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'VPC', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, Vpc] ] 
+        Value: !Join [ '-', [!Ref EnvironmentName, Vpc] ] 
 
   # Two public subnets, where containers can have public IP addresses
   PublicSubnetOne:
@@ -56,7 +56,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicSubnetOne] ]       
+        Value: !Join [ '-', [!Ref EnvironmentName, PublicSubnetOne] ]       
   PublicSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -69,7 +69,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicSubnetTwo] ]       
+        Value: !Join [ '-', [!Ref EnvironmentName, PublicSubnetTwo] ]       
 
   # Two private subnets where containers will only have private
   # IP addresses, and will only be reachable by other members of the
@@ -85,7 +85,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateOne', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateSubnetOne] ]       
+        Value: !Join [ '-', [!Ref EnvironmentName, PrivateSubnetOne] ]       
   PrivateSubnetTwo:
     Type: AWS::EC2::Subnet
     Properties:
@@ -97,7 +97,7 @@ Resources:
       CidrBlock: !FindInMap ['SubnetConfig', 'PrivateTwo', 'CIDR']
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateSubnetTwo] ]       
+        Value: !Join [ '-', [!Ref EnvironmentName, PrivateSubnetTwo] ]       
 
   # Setup networking resources for the public subnets. Containers
   # in the public subnets have public IP addresses and the routing table
@@ -115,14 +115,14 @@ Resources:
       VpcId: !Ref 'VPC'
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PublicRouteTable] ]        
+        Value: !Join [ '-', [!Ref EnvironmentName, PublicRouteTable] ]        
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref 'VPC'      
       Tags:
       - Key: Name
-        Value: !Join [ '-', [!Ref EnvironmentNamePrefix, PrivateRouteTable] ]        
+        Value: !Join [ '-', [!Ref EnvironmentName, PrivateRouteTable] ]        
   PublicRoute:
     Type: AWS::EC2::Route
     DependsOn: GatewayAttachement
@@ -161,24 +161,24 @@ Outputs:
     Description: The ID of the VPC that this stack is deployed in
     Value: !Ref 'VPC'
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'VPCId' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'VPCId' ] ]
   PublicSubnetOne:
     Description: Public subnet one
     Value: !Ref 'PublicSubnetOne'
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetOne' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PublicSubnetOne' ] ]
   PublicSubnetTwo:
     Description: Public subnet two
     Value: !Ref 'PublicSubnetTwo'
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetTwo' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PublicSubnetTwo' ] ]
   PrivateSubnetOne:
     Description: Private subnet one
     Value: !Ref 'PrivateSubnetOne'
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PrivateSubnetOne' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PrivateSubnetOne' ] ]
   PrivateSubnetTwo:
     Description: Private subnet two
     Value: !Ref 'PrivateSubnetTwo'
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PrivateSubnetTwo' ] ]
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'PrivateSubnetTwo' ] ]

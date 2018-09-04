@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: This create a public facing load-balancer.
 Parameters: 
-  EnvironmentNamePrefix: 
+  EnvironmentName: 
     Type: String
     Default: Demo1
-    Description: Prefix for resource names.
+    Description: Name of the environment.
 
 Resources:
   # Load balancers for getting traffic to containers.
@@ -15,7 +15,7 @@ Resources:
       GroupDescription: Access to the public facing load balancer
       VpcId: 
         Fn::ImportValue:
-          !Join [ ':', [ !Ref EnvironmentNamePrefix, 'VPCId' ] ]
+          !Join [ ':', [ !Ref EnvironmentName, 'VPCId' ] ]
       SecurityGroupIngress:
           # Allow access to ALB from anywhere on the internet
           - CidrIp: 0.0.0.0/0
@@ -31,9 +31,9 @@ Resources:
         # The load balancer is placed into the public subnets, so that traffic
         # from the internet can reach the load balancer directly via the internet gateway
         - Fn::ImportValue:
-            !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetOne' ] ]
+            !Join [ ':', [ !Ref EnvironmentName, 'PublicSubnetOne' ] ]
         - Fn::ImportValue:
-            !Join [ ':', [ !Ref EnvironmentNamePrefix, 'PublicSubnetTwo' ] ]
+            !Join [ ':', [ !Ref EnvironmentName, 'PublicSubnetTwo' ] ]
       SecurityGroups: [!Ref 'PublicLoadBalancerSG']
   # A dummy target group is used to setup the ALB to just drop traffic
   # initially, before any real service target groups have been added.
@@ -51,7 +51,7 @@ Resources:
       UnhealthyThresholdCount: 2
       VpcId: 
         Fn::ImportValue:
-          !Join [ ':', [ !Ref EnvironmentNamePrefix, 'VPCId' ] ]      
+          !Join [ ':', [ !Ref EnvironmentName, 'VPCId' ] ]      
   PublicLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     DependsOn:
@@ -68,14 +68,14 @@ Outputs:
     Description: The url of the external load balancer
     Value: !Join ['', ['http://', !GetAtt 'PublicLoadBalancer.DNSName']]
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'ExternalUrl' ] ]     
+      Name: !Join [ ':', [ !Ref EnvironmentName, 'ExternalUrl' ] ]     
   PublicLoadBalancerListener:
     Description: PublicLoadBalancerListener
     Value: !Ref 'PublicLoadBalancerListener'
     Export:
-      Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerListener' ] ]        
+      Name: !Join [ ':', [ !Ref 'EnvironmentName', 'PublicLoadBalancerListener' ] ]        
   PublicLoadBalancerSG:
     Description: The ARN of the Publiv Loabbalancer SG
     Value: !Ref 'PublicLoadBalancerSG'
     Export:
-      Name: !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerSG']]      
+      Name: !Join [':', [!Ref 'EnvironmentName', 'PublicLoadBalancerSG']]      

@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: API service
 Parameters:
-  EnvironmentNamePrefix: 
+  EnvironmentName: 
     Type: String
     Default: Demo1
-    Description: Prefix for resource names.
+    Description: Name of the environment.
   ServiceName:
     Type: String
     Default: "api-service"
@@ -51,7 +51,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Join ['-', [!Ref 'EnvironmentNamePrefix', 'service', !Ref 'ServiceName']]
+      LogGroupName: !Join ['-', [!Ref 'EnvironmentName', 'service', !Ref 'ServiceName']]
 
   # The task definition. This is a simple metadata description of what
   # container to run, and what resource requirements it has.
@@ -66,7 +66,7 @@ Resources:
         - FARGATE
       ExecutionRoleArn:
         Fn::ImportValue:
-          !Join [':', [!Ref 'EnvironmentNamePrefix', 'ECSTaskExecutionRole']]
+          !Join [':', [!Ref 'EnvironmentName', 'ECSTaskExecutionRole']]
       ContainerDefinitions:
         - Name: !Ref 'ServiceName'
           Cpu: !Ref 'TaskCpu'
@@ -80,7 +80,7 @@ Resources:
           LogConfiguration:
             LogDriver: 'awslogs'
             Options:
-              awslogs-group: !Join ['-', [!Ref 'EnvironmentNamePrefix', 'service', !Ref 'ServiceName']]
+              awslogs-group: !Join ['-', [!Ref 'EnvironmentName', 'service', !Ref 'ServiceName']]
               awslogs-region: !Ref 'AWS::Region'
               awslogs-stream-prefix: !Ref 'ServiceName'
 
@@ -94,7 +94,7 @@ Resources:
       ServiceName: !Ref 'ServiceName'
       Cluster:
         Fn::ImportValue:
-          !Join [':', [!Ref 'EnvironmentNamePrefix', 'ClusterName']]
+          !Join [':', [!Ref 'EnvironmentName', 'ClusterName']]
       LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
@@ -105,12 +105,12 @@ Resources:
           AssignPublicIp: DISABLED
           SecurityGroups:
             - Fn::ImportValue:
-                !Join [':', [!Ref 'EnvironmentNamePrefix', 'FargateContainerSecurityGroup']]
+                !Join [':', [!Ref 'EnvironmentName', 'FargateContainerSecurityGroup']]
           Subnets:
             - Fn::ImportValue:
-                !Join [':', [!Ref 'EnvironmentNamePrefix', 'PrivateSubnetOne']]
+                !Join [':', [!Ref 'EnvironmentName', 'PrivateSubnetOne']]
             - Fn::ImportValue:
-                !Join [':', [!Ref 'EnvironmentNamePrefix', 'PrivateSubnetTwo']]
+                !Join [':', [!Ref 'EnvironmentName', 'PrivateSubnetTwo']]
       TaskDefinition: !Ref 'TaskDefinition'
       Role:
         Fn::If:
@@ -145,7 +145,7 @@ Resources:
           Value: false
       VpcId:
         Fn::ImportValue:
-          !Join [':', [!Ref 'EnvironmentNamePrefix', 'VPCId']]
+          !Join [':', [!Ref 'EnvironmentName', 'VPCId']]
 
   # Create a rule on the load balancer for routing traffic to the target group
   LoadBalancerRule:
@@ -159,7 +159,7 @@ Resources:
           Values: [!Ref 'Path']
       ListenerArn:
         Fn::ImportValue:
-          !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerListener']]
+          !Join [':', [!Ref 'EnvironmentName', 'PublicLoadBalancerListener']]
       Priority: !Ref 'Priority'
 
 
