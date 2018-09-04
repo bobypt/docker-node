@@ -74,3 +74,8 @@ Outputs:
     Value: !Ref 'PublicLoadBalancerListener'
     Export:
       Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerListener' ] ]        
+  PublicLoadBalancerSG:
+    Description: The ARN of the Publiv Loabbalancer SG
+    Value: !Ref 'PublicLoadBalancerSG'
+    Export:
+      Name: !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerSG']]      

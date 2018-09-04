@@ -14,17 +14,6 @@ Resources:
     Properties:
       ClusterName: !Join [ '-', [ !Ref 'EnvironmentNamePrefix', 'Cluster' ] ]    
 
-  PublicLoadBalancerSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Access to the public facing load balancer
-      VpcId:
-        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentNamePrefix', 'VPCId']]
-      SecurityGroupIngress:
-          # Allow access to ALB from anywhere on the internet
-          - CidrIp: 0.0.0.0/0
-            IpProtocol: -1
-
   FargateContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -37,7 +26,8 @@ Resources:
       Description: Ingress from the public ALB
       GroupId: !Ref 'FargateContainerSecurityGroup'
       IpProtocol: -1
-      SourceSecurityGroupId: !Ref 'PublicLoadBalancerSG'
+      SourceSecurityGroupId: 
+        Fn::ImportValue: !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerSG']]
 
   # This is an IAM role which authorizes ECS to manage resources on your
   # account on your behalf, such as updating your load balancer with the
@@ -126,11 +116,7 @@ Outputs:
     Value: !Ref 'FargateContainerSecurityGroup'
     Export:
       Name: !Join [':', [!Ref 'EnvironmentNamePrefix', 'FargateContainerSecurityGroup']]
-  PublicLoadBalancerSG:
-    Description: The ARN of the Publiv Loabbalancer SG
-    Value: !Ref 'PublicLoadBalancerSG'
-    Export:
-      Name: !Join [':', [!Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerSG']]
+
 
                 
 
