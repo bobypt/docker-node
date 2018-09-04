@@ -68,4 +68,9 @@ Outputs:
     Description: The url of the external load balancer
     Value: !Join ['', ['http://', !GetAtt 'PublicLoadBalancer.DNSName']]
     Export:
-      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'ExternalUrl' ] ]      
+      Name: !Join [ ':', [ !Ref EnvironmentNamePrefix, 'ExternalUrl' ] ]     
+  PublicLoadBalancerListener:
+    Description: PublicLoadBalancerListener
+    Value: !Ref 'PublicLoadBalancerListener'
+    Export:
+      Name: !Join [ ':', [ !Ref 'EnvironmentNamePrefix', 'PublicLoadBalancerListener' ] ]        
